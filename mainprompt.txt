@@ -1,0 +1,17 @@
+/teamwork @[multi-agent-patterns] @[subagent-driven-development] @[database-design] @[SYSTEM_DESIGN_BLUEPRINT.md]
+
+Act as the Lead Systems Architect & Engineering Orchestrator under the Hierarchical Orchestrator Pattern.
+
+Read and strictly enforce all verified institutional parameters, math constraints, PostgreSQL schemas, UI/UX laws, motion standards, and decision logs (D-01 to D-12) recorded in SYSTEM_DESIGN_BLUEPRINT.md.
+
+Execute the project sequentially through the 6-phase engineering pipeline. Begin now with:
+
+PHASE 1: CONTRACTS & DATABASE SCHEMAS
+1. Initialize the monorepo workspace structure (pnpm-workspace.yaml, apps/web, packages/shared-types-ts, packages/contracts-py, services/).
+2. Author the shared Pydantic V2 contracts (packages/contracts-py) and matching TypeScript interfaces (packages/shared-types-ts).
+3. Implement the PostgreSQL 16 SQLAlchemy 2.0 declarative models:
+   - AcademicPeriod, CurriculumSubject, FacultyProfile (100% full-time, Argon2id hash), Section (60–70+ student cohorts), CourseOffering, TimetableEntry (30-min continuous slots, UNIFIED cohort mode), Room (with is_schedulable quarantine flag; PRRC 108 locked to BSED_SCIENCE), Workstation, PresenceLog (strictly 24-XXXXX student ID).
+4. Configure the Alembic migration environment and generate the initial migration script.
+5. Validate against the Phase 1 Checklist in Section 8 of SYSTEM_DESIGN_BLUEPRINT.md before requesting transition to Phase 2.
+
+Proceed with Phase 1 execution.

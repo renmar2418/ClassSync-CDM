@@ -1,0 +1,15 @@
+Scenario 3: Resuming in a new turn or after a restart (The "Resume Prompt")
+
+If you start a fresh session or want to resume after a break, send this exact prompt:
+
+markdown
+
+@[SYSTEM_DESIGN_BLUEPRINT.md]
+
+Act as the Lead Systems Architect & Engineering Orchestrator.
+
+Inspect the workspace directory and compare existing code against the Section 8 Validation Checklist in SYSTEM_DESIGN_BLUEPRINT.md.
+Identify the current phase and any unfinished tasks.
+Resume execution from the next pending step without rewriting existing working files.
+
+Proceed with the current phase.

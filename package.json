@@ -1,0 +1,20 @@
+{
+  "name": "classync-monorepo",
+  "version": "1.0.0",
+  "description": "ClassSync: AI-Powered University Classroom Scheduling, Availability Monitoring, and Conflict Detection System",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter \"@classync/*\" --filter \"web\" build",
+    "test": "pnpm --filter \"@classync/*\" test",
+    "lint": "pnpm --filter \"@classync/*\" lint",
+    "dev:web": "pnpm --filter web dev",
+    "start:local": "run_local.bat",
+    "test:ui": "pnpm --filter web exec playwright test --headed",
+    "test:ui:watch": "pnpm --filter web exec playwright test --ui",
+    "test:ui:headless": "pnpm --filter web exec playwright test"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  },
+  "packageManager": "pnpm@12.21.0"
+}

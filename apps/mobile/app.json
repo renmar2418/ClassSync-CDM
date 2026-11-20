@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "ClassSync: AI-Powered University Classroom Scheduling, Availability Monitoring, and Conflict Detection System",
+    "slug": "classync",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#34141f"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ph.edu.pnm.classync",
+      "infoPlist": {
+        "NSCameraUsageDescription": "ClassSync requires camera access to scan 15-second rotating attendance QR codes in computer laboratories and lecture rooms."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#34141f"
+      },
+      "package": "ph.edu.pnm.classync",
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow ClassSync to access your camera to scan room presence QR codes."
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/InterVariable.woff2"
+          ]
+        }
+      ]
+    ]
+  }
+}

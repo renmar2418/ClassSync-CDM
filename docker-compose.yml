@@ -1,0 +1,110 @@
+# Docker Compose for ClassSync Local Development & Staging
+# Official Project Title: ClassSync: AI-Powered University Classroom Scheduling,
+# Availability Monitoring, and Conflict Detection System
+
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: classync-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: classync
+      POSTGRES_USER: classync_admin
+      POSTGRES_PASSWORD: classync_password_2026!
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U classync_admin -d classync"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile
+    container_name: classync-gateway
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - ACADEMIC_SERVICE_URL=http://academic:8001
+      - SCHEDULING_SERVICE_URL=http://scheduling:8002
+      - NOTIFICATION_SERVICE_URL=http://notification:8003
+      - PRESENCE_SERVICE_URL=http://presence:8004
+      - JWT_SECRET_KEY=classync-zero-trust-hs256-production-secret-min32bytes!
+      - CLOUDFLARE_TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+    depends_on:
+      - academic
+      - scheduling
+      - notification
+      - presence
+
+  academic:
+    build:
+      context: .
+      dockerfile: services/academic/Dockerfile
+    container_name: classync-academic
+    restart: always
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - DATABASE_URL=postgresql://classync_admin:classync_password_2026!@postgres:5432/classync
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  scheduling:
+    build:
+      context: .
+      dockerfile: services/scheduling/Dockerfile
+    container_name: classync-scheduling
+    restart: always
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - DATABASE_URL=postgresql://classync_admin:classync_password_2026!@postgres:5432/classync
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  notification:
+    build:
+      context: .
+      dockerfile: services/notification/Dockerfile
+    container_name: classync-notification
+    restart: always
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - BREVO_API_KEY=${BREVO_API_KEY}
+      - BREVO_SENDER_EMAIL=${BREVO_SENDER_EMAIL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  presence:
+    build:
+      context: .
+      dockerfile: services/presence/Dockerfile
+    container_name: classync-presence
+    restart: always
+    ports:
+      - "8004:8004"
+    environment:
+      - PORT=8004
+      - DATABASE_URL=postgresql://classync_admin:classync_password_2026!@postgres:5432/classync
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

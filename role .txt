@@ -1,0 +1,18 @@
+Test Administrator:
+
+Student Number / Email: admin@pnm.edu.ph
+Password: CdMAdmin2026!
+Turnstile will auto-pass (green checkmark).
+Click Sign in. The app routes immediately to /admin/overview.
+
+Test Faculty / Teacher:
+
+Student Number / Email: teacher@pnm.edu.ph
+Password: FacultyPass2026!
+Click Sign in. The app routes immediately to /teacher/dashboard.
+
+Test Student:
+
+Student Number / Email: 24-00123@student.pnm.edu.ph
+Password: StudentPass2026!
+Click Sign in. The app routes immediately to /student/dashboard.

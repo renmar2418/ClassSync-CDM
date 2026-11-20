@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Timetables Projection: Public read for verified students/faculty, write restricted to service account
+    match /timetables/{periodId} {
+      allow read: if request.auth != null && 
+        (request.auth.token.email.matches('.*@student\\.pnm\\.edu\\.ph') || 
+         request.auth.token.email.matches('.*@pnm\\.edu\\.ph'));
+      allow write: if request.auth != null && request.auth.token.role == 'service_worker';
+    }
+
+    // Workstation Presence Projection: Real-time read for mobile clients
+    match /workstation_presence/{roomCode} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.role == 'service_worker';
+    }
+
+    // Facility Directory Projection: Schedulable spaces only
+    match /facility_directory/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.role == 'service_worker';
+    }
+  }
+}

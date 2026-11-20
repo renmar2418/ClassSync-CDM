@@ -1,0 +1,102 @@
+# Render Infrastructure as Code Blueprint
+# Official Project Title: ClassSync: AI-Powered University Classroom Scheduling,
+# Availability Monitoring, and Conflict Detection System
+
+services:
+  # =========================================================================
+  # 1. API Gateway (Port 8000) — Public Zero-Trust Ingress & Reverse Proxy
+  # =========================================================================
+  - type: web
+    name: classync-gateway
+    env: python
+    region: singapore
+    plan: starter
+    buildCommand: pip install -r services/gateway/requirements.txt
+    startCommand: uvicorn services.gateway.main:app --host 0.0.0.0 --port 8000
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: CLOUDFLARE_TURNSTILE_SECRET_KEY
+        sync: false
+      - key: ACADEMIC_SERVICE_URL
+        fromService:
+          type: web
+          name: classync-academic
+          property: host
+      - key: SCHEDULING_SERVICE_URL
+        fromService:
+          type: web
+          name: classync-scheduling
+          property: host
+      - key: PRESENCE_SERVICE_URL
+        fromService:
+          type: web
+          name: classync-presence
+          property: host
+
+  # =========================================================================
+  # 2. Academic Service (Port 8001) — Spatial Directory & Curriculum Engine
+  # =========================================================================
+  - type: web
+    name: classync-academic
+    env: python
+    region: singapore
+    plan: starter
+    buildCommand: pip install -r services/academic/requirements.txt
+    startCommand: uvicorn services.academic.main:app --host 0.0.0.0 --port 8001
+    envVars:
+      - key: PORT
+        value: 8001
+      - key: DATABASE_URL
+        fromDatabase:
+          name: classync-postgres
+          property: connectionString
+
+  # =========================================================================
+  # 3. Scheduling Service (Port 8002) — Google OR-Tools CP-SAT Solver
+  # =========================================================================
+  - type: web
+    name: classync-scheduling
+    env: python
+    region: singapore
+    plan: standard
+    buildCommand: pip install -r services/scheduling/requirements.txt
+    startCommand: uvicorn services.scheduling.main:app --host 0.0.0.0 --port 8002
+    envVars:
+      - key: PORT
+        value: 8002
+      - key: DATABASE_URL
+        fromDatabase:
+          name: classync-postgres
+          property: connectionString
+
+  # =========================================================================
+  # 4. Presence Service (Port 8004) — 15s TOTP QR & Real-Time SSE Vacancy
+  # =========================================================================
+  - type: web
+    name: classync-presence
+    env: python
+    region: singapore
+    plan: starter
+    buildCommand: pip install -r services/presence/requirements.txt
+    startCommand: uvicorn services.presence.main:app --host 0.0.0.0 --port 8004
+    envVars:
+      - key: PORT
+        value: 8004
+      - key: DATABASE_URL
+        fromDatabase:
+          name: classync-postgres
+          property: connectionString
+
+# =========================================================================
+# Managed Database: PostgreSQL 16
+# =========================================================================
+databases:
+  - name: classync-postgres
+    region: singapore
+    plan: starter
+    databaseName: classync
+    user: classync_admin
+    postgresMajorVersion: 16

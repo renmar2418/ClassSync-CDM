@@ -1,0 +1,38 @@
+{
+  "name": "ClassSync: AI-Powered University Classroom Scheduling, Availability Monitoring, and Conflict Detection System",
+  "short_name": "ClassSync",
+  "description": "AI-Powered University Classroom Scheduling, Availability Monitoring, and Conflict Detection System for Colegio de Montalban / Pamantasan ng Montalban",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f7f8fa",
+  "theme_color": "#34141f",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/branding/classsync-logo-assets/classsync-icon-32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/branding/classsync-logo-assets/classsync-icon-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/branding/classsync-logo-assets/classsync-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/branding/classsync-logo-assets/classsync-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

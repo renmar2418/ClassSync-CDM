@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ClassSync — Comprehensive System Engineering & Capstone Defense Specification</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+      @bottom-right {
+        content: counter(page);
+      }
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1f2937;
+      line-height: 1.5;
+      font-size: 10.5pt;
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2, h3, h4 {
+      color: #111827;
+      font-weight: 700;
+      margin-top: 1.2em;
+      margin-bottom: 0.4em;
+      page-break-after: avoid;
+    }
+    h1 {
+      font-size: 20pt;
+      color: #9f1239; /* Deep Rouge */
+      border-bottom: 2px solid #e11d48;
+      padding-bottom: 6px;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 14pt;
+      color: #881337;
+      border-bottom: 1px solid #fecdd3;
+      padding-bottom: 4px;
+      margin-top: 1.4em;
+    }
+    h3 {
+      font-size: 11.5pt;
+      color: #be123c;
+    }
+    p {
+      margin-top: 0.3em;
+      margin-bottom: 0.6em;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 8pt;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-primary { background: #ffe4e6; color: #9f1239; }
+    .badge-success { background: #dcfce7; color: #166534; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px 0;
+      font-size: 9.5pt;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #fff1f2;
+      color: #881337;
+      font-weight: 600;
+    }
+    tr:nth-child(even) td {
+      background-color: #fafafa;
+    }
+    .callout {
+      background-color: #fff1f2;
+      border-left: 4px solid #e11d48;
+      padding: 10px 14px;
+      margin: 12px 0;
+      border-radius: 0 6px 6px 0;
+      page-break-inside: avoid;
+    }
+    .callout-title {
+      font-weight: 700;
+      color: #9f1239;
+      margin-bottom: 4px;
+      font-size: 10pt;
+    }
+    .formula-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 9pt;
+      color: #0f172a;
+      margin: 8px 0 12px 0;
+      page-break-inside: avoid;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .taglish-box {
+      background: #f0fdf4;
+      border-left: 4px solid #16a34a;
+      padding: 10px 14px;
+      margin: 10px 0;
+      border-radius: 0 6px 6px 0;
+      font-style: italic;
+      page-break-inside: avoid;
+    }
+    .footer-note {
+      font-size: 8pt;
+      color: #6b7280;
+      text-align: center;
+      margin-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1: TITLE & 5-COURSE MAPPING -->
+  <h1>ClassSync: Capstone Engineering & Architecture Specification</h1>
+  <p><strong>System Title:</strong> ClassSync — Intelligent University Timetable Scheduling, Room Availability, and Conflict Prevention Platform<br>
+  <strong>Institutional Context:</strong> Colegio de Montalban (CdM) — ICS, ITE, and IBE Institutes<br>
+  <strong>Target Academic Year:</strong> AY 2026–2027 | <strong>Architectural Paradigm:</strong> API-Led Integration & Schema-Driven Development (SDD)</p>
+
+  <div class="callout">
+    <div class="callout-title">EXECUTIVE BRIEF & 5-COURSE COLLABORATION MATRIX</div>
+    ClassSync addresses the comprehensive academic requirements of five collaborating third-year engineering courses under their respective instructors, avoiding disconnected prototypes by providing a unified enterprise platform.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 28%;">Course & Professor</th>
+        <th style="width: 25%;">Academic Core Focus</th>
+        <th>Concrete System Implementation in ClassSync</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. API Microservices (Backend)</strong><br><span class="badge badge-primary">Sir Nat</span></td>
+        <td>Microservice decoupling, API gateways, inter-service contracts</td>
+        <td><strong>FastAPI Microservices Suite:</strong> Gateway Service (<code>/api/v1</code>), Academic Service, CP-SAT Scheduling Solver Service, and Notification Service coordinated via typed schemas in <code>packages/api-contracts</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>2. Enterprise Security</strong><br><span class="badge badge-danger">Sir Mades</span></td>
+        <td>Identity validation, RBAC, input sanitization, audit logging</td>
+        <td><strong>Google OAuth 2.0 / Firebase Bearer Token Verification:</strong> Cryptographically verified at Gateway boundary; strict RBAC (Student, Teacher, Admin); Pydantic payload sanitization; tamper-proof immutable draft hashing.</td>
+      </tr>
+      <tr>
+        <td><strong>3. Database Management (Firebase)</strong><br><span class="badge badge-warning">Ma'am Gretchen</span></td>
+        <td>Cloud NoSQL persistence, real-time sync, security rules</td>
+        <td><strong>Cloud Firestore:</strong> Flat root collections (<code>institutes</code>, <code>rooms</code>, <code>published_schedules</code>, <code>users</code>) enabling instantaneous mobile synchronization and Firestore document security rules.</td>
+      </tr>
+      <tr>
+        <td><strong>4. Mobile Application</strong><br><span class="badge badge-success">Ma'am Gretchen</span></td>
+        <td>Native mobile UI/UX, responsive views, portable access</td>
+        <td><strong>React Native / Expo Client:</strong> Compiles to authentic <code>.apk</code>; provides students and teachers with daily timetable cards, live campus room-vacancy finder, and push conflict notifications.</td>
+      </tr>
+      <tr>
+        <td><strong>5. Capstone Manuscript</strong><br><span class="badge badge-primary">Ma'am Lamadora</span></td>
+        <td>Technical documentation, methodologies, defense paper</td>
+        <td><strong>Chapters 1 to 5 Documentation:</strong> API-Led topology diagrams, formal constraint equations, ERD schemas, HCI/WCAG accessibility evaluations, and performance benchmarking.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>1. Three-Tier API-Led Integration Architecture</h2>
+  <p>To eliminate bottlenecks and avoid mobile application lag during complex mathematical optimization, ClassSync applies Gartner's <strong>API-Led Integration</strong> standard across three tiers:</p>
+  <ul>
+    <li><strong>Experience API Layer (Gateway / BFF):</strong> Lightweight mobile endpoints (<code>/api/v1/mobile/*</code>) that strip out heavy desktop administrative payloads, returning only actionable schedule streams and room occupancy cards.</li>
+    <li><strong>Process API Layer (Business Orchestration):</strong> Encapsulates the Google OR-Tools CP-SAT constraint engine, independent timetable validation routines, and schedule publication managers.</li>
+    <li><strong>System API Layer (Data Access & Hardware Boundaries):</strong> Encapsulates isolated database operations across relational databases and Firebase Cloud Firestore, enforcing strict Zero-Trust boundaries.</li>
+  </ul>
+
+  <!-- PAGE BREAK FOR DETAILED CALCULATION LOGIC -->
+  <div class="page-break"></div>
+
+  <h2>2. Faculty Load, Teaching Units & Time Window Calculations</h2>
+
+  <div class="callout">
+    <div class="callout-title">INSTITUTIONAL COMPLIANCE: 07:00 AM – 07:00 PM WORKING BAND</div>
+    Per Colegio de Montalban (CdM) institutional policy, faculty must comply with the university operating window of <strong>07:00 AM to 07:00 PM</strong> (Monday through Saturday). The scheduler coordinates shifts within this 12-hour band while enforcing strict labor safeguards.
+  </div>
+
+  <h3>A. Faculty Employment Classes & Unit Limits</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Faculty Category</th>
+        <th>Max Weekly Teaching Units</th>
+        <th>Max Daily Active Hours</th>
+        <th>Operating Shift Bounds</th>
+        <th>Subject Qualification Constraint</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Full-Time Faculty</strong></td>
+        <td><strong>18 – 24 Units</strong><br>(Standard 21 units)</td>
+        <td>Max 6.0 – 8.0 hours/day active teaching</td>
+        <td>Assigned within 07:00 AM – 07:00 PM<br>(Morning shift or Afternoon/Evening shift)</td>
+        <td>Must match tagged academic major (e.g., ICS faculty for IT/CS core courses)</td>
+      </tr>
+      <tr>
+        <td><strong>Part-Time / Adjunct</strong></td>
+        <td><strong>9 – 12 Units</strong></td>
+        <td>Max 3.0 – 4.5 hours/day</td>
+        <td>Contracted blocks (e.g., Tue/Thu 5:30–8:30 PM, or Saturday 8 AM–5 PM)</td>
+        <td>Industry practitioners mapped to specialized electives (e.g., Mobile App Dev, Cybersecurity)</td>
+      </tr>
+      <tr>
+        <td><strong>Designated Program Head</strong></td>
+        <td><strong>6 – 12 Units</strong><br>(Deloaded 12–15 units)</td>
+        <td>Max 4.0 hours/day active teaching</td>
+        <td>Standard 8:00 AM – 5:00 PM office presence + evening oversight</td>
+        <td>Deloaded for administrative advising, curriculum review, and grievance handling</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>B. Pre-Computation Demand vs. Supply Formula</h3>
+  <p>Before automated AI/solver generation begins, the system verifies feasibility using the following formulas:</p>
+
+  <div class="formula-box">
+1. TOTAL LECTURE CONTACT HOURS DEMAND:
+   Demand_Lec = SUM(Sections_i * Subject_LecHours_i)
+
+2. TOTAL LAB CONTACT HOURS DEMAND:
+   Demand_Lab = SUM(Sections_i * Subject_LabHours_i)
+
+3. ROOM OPERATING SUPPLY:
+   Supply_Rooms = Total_Usable_Rooms * Weekly_Operating_Hours (72 hrs: Mon-Sat 7AM-7PM)
+
+4. FEASIBILITY RATIO CHECK:
+   Utilization_Ratio = Demand_Hours / Supply_Hours
+   --> IF Utilization_Ratio > 1.00: Status = INFEASIBLE (Deficit Alert Generated)
+   --> IF Utilization_Ratio <= 0.85: Status = OPTIMAL (Generation Permitted)
+  </div>
+
+  <h3>C. Health, Fatigue & Lunch Break Constraints</h3>
+  <ul>
+    <li><strong>Mandatory Lunch Protection:</strong> A continuous 60-minute break is guaranteed between <strong>11:30 AM and 01:30 PM</strong> for both teachers and students. No single class can span through this period without a split.</li>
+    <li><strong>Consecutive Teaching Cap:</strong> No teacher or student section can be scheduled for more than <strong>4.5 continuous hours</strong> (3 consecutive 1.5-hour subjects) without a mandatory minimum 30-minute rest window.</li>
+    <li><strong>Passing Time Buffer:</strong> Automatic 15-minute travel buffers are inserted between room changes across different campus floors or buildings.</li>
+  </ul>
+
+  <!-- PAGE BREAK FOR IRREGULAR STUDENT LOGIC & DEFENSE -->
+  <div class="page-break"></div>
+
+  <h2>3. Irregular Students, Backload Clearing & Section Slot Infiltration</h2>
+
+  <div class="callout">
+    <div class="callout-title">THE ADVISORY REQUIREMENT: REGULAR VS. IRREGULAR ENROLLMENT</div>
+    Regular students follow a pre-calculated, conflict-free block schedule. In contrast, <strong>irregular students cannot self-enroll freely</strong>. They carry backload units, failed prerequisites, and retakes. They must undergo formal <strong>Program Head Academic Advising</strong>.
+  </div>
+
+  <h3>A. The 3-Step Irregular Advising & Enrollment Process</h3>
+  <ol>
+    <li><strong>Evaluation & Advising Slip Generation:</strong> The Program Head opens the Advising Portal (<code>/admin/advising</code>), reviews the student's deficiency transcript, verifies cleared prerequisites, and authorizes an approved subject list with an official maximum unit cap (e.g., maximum 18 or 21 units).</li>
+    <li><strong>Mobile Subject & Slot Selection:</strong> The student logs into the Mobile App, where only the approved subjects appear. The student can select open slots in regular block sections (e.g., join <code>BSIT-3A</code> for major subjects) and cross-enroll into lower-year sections (e.g., join <code>BSIT-1B</code> for backload subjects).</li>
+    <li><strong>Real-Time Dynamic Guardrail Verification:</strong>
+      <ul>
+        <li><strong>Room Seat Availability Guardrail:</strong>
+          <div class="formula-box">Available_Irreg_Slots = Classroom_Physical_Capacity - Regular_Block_Count
+Example: Room Capacity = 45 | Regular Enrollees = 38 --> 7 Available Slots</div>
+          If open slots = 0, the section is locked as <strong>FULL</strong>, protecting physical room capacity.
+        </li>
+        <li><strong>Cross-Year Clash Prevention:</strong> If a 3rd-year major subject overlaps in time with a 1st-year retake, the solver alerts immediately and suggests conflict-free alternative sections.</li>
+        <li><strong>Overload Ceiling Check:</strong> Total selected units cannot exceed the Program Head's authorized limit without an approved Dean's Overload Permit.</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3>B. Special Accommodations (Working Students & Safety Separations)</h3>
+  <ul>
+    <li><strong>Working Student Shift Anchoring:</strong> Accommodates verified BPO or daytime employment schedules by restricting section suggestions to afternoon/evening slots.</li>
+    <li><strong>Anti-Bullying / Disciplinary Mutual Exclusion:</strong> Hard constraint enforcing:
+      <div class="formula-box">CONSTRAINT: Student_A.Section_ID != Student_B.Section_ID (Enforced across all classes)</div>
+    </li>
+  </ul>
+
+  <h2>4. Defense Preparation: Strengths, Weaknesses & Taglish Scripts</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 30%;">Panel Attack Question</th>
+        <th style="width: 35%;">Underlying Technical Trade-Off</th>
+        <th>Winning Defense Answer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><em>"Bakit hindi niyo i-schedule buong school nang sabay-sabay?"</em></td>
+        <td>Combinatorial explosion in CP-SAT solvers when handling 50+ sections at once.</td>
+        <td>We implement <strong>hierarchical batching</strong>: Institute-specific laboratories and core majors are solved in Phase 1, followed by Phase 2 centralized harmonization of shared GenEd rooms and cross-department faculty.</td>
+      </tr>
+      <tr>
+        <td><em>"Paano kung maubusan ng slot si irreg sa regular section?"</em></td>
+        <td>Physical room capacity cannot be violated due to campus safety and fire codes.</td>
+        <td>ClassSync dynamically calculates vacant capacity ($Capacity - RegularEnrollees$). If a room is full, the mobile app guides the student to parallel sections (e.g., Section 3B) or flags an extra offering request for the Dean.</td>
+      </tr>
+      <tr>
+        <td><em>"Bakit kailangan pa dumaan sa Program Head si irreg?"</em></td>
+        <td>Academic compliance and prerequisite validation required by CHED/SUC policies.</td>
+        <td>SUC policies strictly forbid irregulars from taking advance subjects without passing prerequisites. ClassSync digitizes the advising slip into an automated authorization gate.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="taglish-box">
+    <strong>Team Briefing Script (For Group Chat & Panel Discussion):</strong><br>
+    "Napatunayan natin sa ClassSync na kumpleto ang compliance sa 5 subjects: Microservices (Sir Nat), Security (Sir Mades), Firebase (Ma'am Gretchen), Mobile App (Ma'am Gretchen), at Manuscript (Ma'am Lamadora). Sumusunod tayo sa 7 AM–7 PM window ng CdM na may protektadong lunch break at unit limits per professor. At para sa mga irreg, protektado ang classroom capacity habang may real-time clash detection kapag kumuha sila ng backload sa regular sections."
+  </div>
+
+  <div class="footer-note">
+    Document Reference: <code>docs/academic/CLASSSYNC_CAPSTONE_SPECIFICATION.pdf</code> | Generated for Colegio de Montalban Capstone Collaboration
+  </div>
+
+</body>
+</html>

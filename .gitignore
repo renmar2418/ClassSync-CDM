@@ -1,0 +1,42 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+config/secrets/
+Do not disclose this in public/
+
+# Node & Frontend
+node_modules/
+dist/
+build/
+.expo/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Database & Storage
+*.db
+*.sqlite3
+classync_dev.db
+graphify-out/
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+antigravity-awesome-skills/

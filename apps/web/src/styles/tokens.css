@@ -1,0 +1,107 @@
+/**
+ * ClassSync V2 — Authoritative Design Tokens
+ * Soft Rouge & Cool Neutral System (Colegio de Montalban / Pamantasan ng Montalban)
+ * Complies with WCAG 2.2 AA Contrast (>= 4.5:1) and Minimum Touch Targets (>= 48px).
+ */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* =========================================================================
+     1. Institutional Brand Core
+     ========================================================================= */
+  --brand-midnight:    #34141f;  /* Deep maroon for high-contrast navigation */
+  --brand-rouge:       #872e49;  /* Primary brand action & active selection */
+  --brand-rose:        #f8ebf0;  /* Soft rose tint for highlights and featured cards */
+
+  /* =========================================================================
+     2. Neutral Canvas & Surfaces
+     ========================================================================= */
+  --canvas:            #f7f8fa;  /* Clean app background canvas */
+  --surface:           #ffffff;  /* Primary card and modal background */
+  --surface-strong:    #f0f1f4;  /* Elevated panel & table header surface */
+  --surface-subtle:    var(--canvas);
+  --line:              #e9e9ed;  /* Structural divider borders */
+  --control-border:    #858997;  /* Form inputs & interactive borders */
+
+  /* =========================================================================
+     3. Typography & Ink
+     ========================================================================= */
+  --ink:               #20242c;  /* High-contrast primary body text (14.5:1 on canvas) */
+  --ink-soft:          #667085;  /* Secondary subtext & helper labels (4.65:1 on surface) */
+  --ink-on-tint:       #596273;  /* Text over tinted background badges */
+  --text-on-action:    #ffffff;  /* High-contrast text on primary buttons (8.35:1 on rouge) */
+
+  /* =========================================================================
+     4. Interactive Actions & Focus
+     ========================================================================= */
+  --primary:           var(--brand-rouge);
+  --primary-hover:     #6f2039;
+  --primary-soft:      var(--brand-rose);
+  --focus-ring:        #295c91;  /* High-visibility blue focus outline */
+  --focus-on-dark:     #f0c9d5;
+
+  /* =========================================================================
+     5. Semantic Feedback & Status States
+     ========================================================================= */
+  /* Success: Confirmed, Available, Active */
+  --success:           #16734b;
+  --success-soft:      #eaf6ef;
+  --success-border:    #9bc7ad;
+
+  /* Warning: Drafts, Approaching Conflicts, Buffer Warnings */
+  --warning:           #9a630a;
+  --warning-soft:      #fff5df;
+  --warning-border:    #d9bd83;
+
+  /* Danger: Collisions, Capacity Overflows, Double Bookings */
+  --danger:            #b42318;
+  --danger-hover:      #8e1b12;
+  --danger-soft:       #fff0ee;
+  --danger-border:     #e8aba4;
+
+  /* Info: System Notes, Academic Terms, Room Equipment */
+  --info:              #295c91;
+  --info-soft:         #edf4fc;
+  --info-border:       #a7bfd9;
+
+  /* =========================================================================
+     6. Dimensional Metrics & Layout Ergonomics (Fitts's Law)
+     ========================================================================= */
+  --space-1:           4px;
+  --space-2:           8px;
+  --space-3:           16px;
+  --space-4:           24px;
+  --space-5:           32px;
+  --space-6:           48px;
+
+  /* Corner Radii */
+  --radius:            10px;     /* Standard inputs, buttons, badges */
+  --radius-lg:         12px;     /* Content cards & dropdowns */
+  --radius-featured:   16px;     /* Hero cards & modal dialogs */
+
+  /* Layout Tracks */
+  --sidebar-width:     256px;    /* Desktop navigation rail */
+  --header-height:     64px;     /* Top utility & profile bar */
+  --bottom-nav-height: 72px;     /* Student mobile bottom bar */
+  --control-height:    48px;     /* Mobile touch target minimum (WCAG 2.2 >= 48px) */
+  --target-min:        44px;     /* Desktop click target minimum */
+
+  /* Elevation Shadows */
+  --shadow-card:       0 1px 3px rgb(32 36 44 / 5%);
+  --shadow-overlay:    0 16px 48px rgb(28 36 48 / 18%);
+
+  /* =========================================================================
+     7. Micro-Interaction Standards (Decision Log D-10)
+     ========================================================================= */
+  --duration-tactile:    150ms;
+  --duration-transition: 200ms;
+  --duration-max:        250ms;
+  --ease-standard:       cubic-bezier(0.2, 0.0, 0.0, 1.0);
+}
