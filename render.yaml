@@ -10,7 +10,7 @@ services:
     name: classync-gateway
     env: python
     region: singapore
-    plan: starter
+    plan: free
     buildCommand: pip install -e packages/contracts-py && pip install -r services/gateway/requirements.txt
     startCommand: uvicorn services.gateway.main:app --host 0.0.0.0 --port 8000
     envVars:
@@ -52,7 +52,7 @@ services:
     name: classync-academic
     env: python
     region: singapore
-    plan: starter
+    plan: free
     buildCommand: pip install -e packages/contracts-py && pip install -r services/academic/requirements.txt
     startCommand: uvicorn services.academic.main:app --host 0.0.0.0 --port 8001
     envVars:
@@ -70,7 +70,7 @@ services:
     name: classync-scheduling
     env: python
     region: singapore
-    plan: standard
+    plan: free
     buildCommand: pip install -e packages/contracts-py && pip install -r services/scheduling/requirements.txt
     startCommand: uvicorn services.scheduling.main:app --host 0.0.0.0 --port 8002
     envVars:
@@ -88,7 +88,7 @@ services:
     name: classync-presence
     env: python
     region: singapore
-    plan: starter
+    plan: free
     buildCommand: pip install -e packages/contracts-py && pip install -r services/presence/requirements.txt
     startCommand: uvicorn services.presence.main:app --host 0.0.0.0 --port 8004
     envVars:
@@ -106,7 +106,7 @@ services:
     name: classync-notification
     env: python
     region: singapore
-    plan: starter
+    plan: free
     buildCommand: pip install -e packages/contracts-py && pip install -r services/notification/requirements.txt
     startCommand: uvicorn services.notification.main:app --host 0.0.0.0 --port 8003
     envVars:
@@ -125,7 +125,7 @@ services:
 databases:
   - name: classync-postgres
     region: singapore
-    plan: starter
+    plan: free
     databaseName: classync
     user: classync_admin
     postgresMajorVersion: 16
