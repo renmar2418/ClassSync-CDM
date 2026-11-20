@@ -40,6 +40,11 @@ class GatewaySettings(BaseModel):
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 7
 
+    # Database Configuration (Optional PostgreSQL/SQLite hybrid backing)
+    database_url: Optional[str] = Field(
+        default_factory=lambda: os.getenv("DATABASE_URL")
+    )
+
     # Cloudflare Turnstile Configuration
     turnstile_secret_key: str = Field(
         default_factory=lambda: os.getenv(

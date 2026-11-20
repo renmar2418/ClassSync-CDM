@@ -354,3 +354,50 @@ class PresenceLog(Base):
 
     room: Mapped["Room"] = relationship("Room", back_populates="presence_logs", overlaps="workstation,presence_logs")
     workstation: Mapped["Workstation"] = relationship("Workstation", back_populates="presence_logs", overlaps="presence_logs,room")
+
+
+class StudentProfile(Base):
+    __tablename__ = "student_profile"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    student_id: Mapped[str] = mapped_column(String(16), unique=True, nullable=False) # e.g. '24-00123'
+    institutional_email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    full_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    password_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True) # None = needs first-time setup
+    section_code: Mapped[Optional[str]] = mapped_column(
+        String(64), ForeignKey("section.section_code", ondelete="SET NULL"), nullable=True
+    )
+    curriculum_version_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("curriculum_version.id", ondelete="SET NULL"), nullable=True
+    )
+    year_level: Mapped[int] = mapped_column(SmallInteger, default=1, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    requires_password_change: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"), nullable=False
+    )
+
+    __table_args__ = (
+        CheckConstraint("year_level BETWEEN 1 AND 5", name="chk_student_year_level"),
+        CheckConstraint(
+            "length(student_id) = 8 AND "
+            "substr(student_id, 1, 1) BETWEEN '2' AND '9' AND "
+            "substr(student_id, 2, 1) BETWEEN '0' AND '9' AND "
+            "substr(student_id, 3, 1) = '-' AND "
+            "substr(student_id, 4, 1) BETWEEN '0' AND '9' AND "
+            "substr(student_id, 5, 1) BETWEEN '0' AND '9' AND "
+            "substr(student_id, 6, 1) BETWEEN '0' AND '9' AND "
+            "substr(student_id, 7, 1) BETWEEN '0' AND '9' AND "
+            "substr(student_id, 8, 1) BETWEEN '0' AND '9'",
+            name="chk_student_id_format",
+        ),
+        Index("idx_student_profile_id", "student_id"),
+        Index("idx_student_profile_email", "institutional_email"),
+        Index("idx_student_profile_section", "section_code"),
+    )
+
+    section: Mapped[Optional["Section"]] = relationship("Section")
+    curriculum_version: Mapped[Optional["CurriculumVersion"]] = relationship("CurriculumVersion")
+

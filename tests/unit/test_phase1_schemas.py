@@ -541,6 +541,7 @@ class TestSQLAlchemyDeclarativeModels:
             "presence_log",
             "curriculum_version",
             "student_curriculum_override",
+            "student_profile",
         }
         assert expected_tables == set(Base.metadata.tables.keys())
 
@@ -634,9 +635,10 @@ class TestSQLAlchemyDeclarativeModels:
         assert counts_first_run["rooms"] == 55
         assert counts_first_run["workstations"] == 270
         assert counts_first_run["subjects"] == 10
-        assert counts_first_run["faculty"] == 5
+        assert counts_first_run["faculty"] == 7
         assert counts_first_run["sections"] == 3
         assert counts_first_run["offerings"] == 4
+        assert counts_first_run["students"] == 6
 
         # Verify quarantined spaces are strictly excluded from schedulable queries
         schedulable_rooms = db_session.scalars(

@@ -572,3 +572,82 @@ class ConflictReport(BaseContract):
     section_collisions: int = 0
     quarantine_violations: int = 0
     details: List[str] = Field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# Student Profile & Roster Management DTOs (Phase 11)
+# ---------------------------------------------------------------------------
+
+class StudentProfileBase(BaseContract):
+    student_id: str = Field(..., description="Student ID e.g. '24-00123'")
+    institutional_email: str = Field(..., description="Student email e.g. '24-00123@student.pnm.edu.ph'")
+    full_name: str = Field(..., description="Full Name e.g. 'Juan Dela Cruz'")
+    section_code: Optional[str] = Field(None, description="Assigned Section Code e.g. 'BSIT-3A'")
+    curriculum_version_id: Optional[uuid.UUID] = Field(None, description="Optional Curriculum Version UUID")
+    year_level: int = Field(default=1, ge=1, le=5, description="Year level 1-5")
+    is_active: bool = True
+    requires_password_change: bool = True
+
+    @field_validator("student_id")
+    def check_student_id(cls, v: str) -> str:
+        return validate_student_id_deterministic(v)
+
+    @field_validator("institutional_email")
+    def check_student_email(cls, v: str) -> str:
+        if not isinstance(v, str):
+            raise ValueError("Invalid institutional email.")
+        cleaned = v.strip().lower()
+        if "@" not in cleaned:
+            raise ValueError("Invalid email format.")
+        parts = cleaned.split("@")
+        if len(parts) != 2:
+            raise ValueError("Invalid email format.")
+        domain = parts[1]
+        if domain not in ("student.pnm.edu.ph", "pnm.edu.ph"):
+            raise ValueError("Student email must end with @student.pnm.edu.ph or @pnm.edu.ph")
+        return cleaned
+
+
+class StudentProfileCreate(StudentProfileBase):
+    password: Optional[str] = None
+
+
+class StudentProfileUpdate(BaseContract):
+    full_name: Optional[str] = None
+    section_code: Optional[str] = None
+    curriculum_version_id: Optional[uuid.UUID] = None
+    year_level: Optional[int] = Field(None, ge=1, le=5)
+    is_active: Optional[bool] = None
+    requires_password_change: Optional[bool] = None
+
+
+class StudentProfileSchema(StudentProfileBase):
+    id: uuid.UUID
+    created_at: datetime
+
+
+class StudentImportRow(BaseContract):
+    student_id: str
+    institutional_email: str
+    full_name: str
+    section_code: Optional[str] = None
+    year_level: int = 1
+
+    @field_validator("student_id")
+    def check_student_id(cls, v: str) -> str:
+        return validate_student_id_deterministic(v)
+
+    @field_validator("institutional_email")
+    def check_student_email(cls, v: str) -> str:
+        cleaned = v.strip().lower()
+        if not ("@" in cleaned and (cleaned.endswith("@student.pnm.edu.ph") or cleaned.endswith("@pnm.edu.ph"))):
+            raise ValueError("Institutional email must end with @student.pnm.edu.ph or @pnm.edu.ph")
+        return cleaned
+
+
+class StudentImportResult(BaseContract):
+    total_processed: int
+    imported: int
+    skipped: int
+    errors: List[str] = Field(default_factory=list)
+

@@ -224,6 +224,121 @@ def _init_mock_user_db() -> Dict[str, UserRecord]:
 
 USER_DB: Dict[str, UserRecord] = _init_mock_user_db()
 
+_GATEWAY_ENGINE = None
+
+def _get_gateway_db_engine():
+    global _GATEWAY_ENGINE
+    db_url = settings.database_url or os.getenv("DATABASE_URL")
+    if not db_url:
+        return None
+    if _GATEWAY_ENGINE is None:
+        from sqlalchemy import create_engine
+        _GATEWAY_ENGINE = create_engine(db_url, pool_pre_ping=True)
+    return _GATEWAY_ENGINE
+
+
+def get_user_record(lookup_key: str) -> Optional[UserRecord]:
+    """Retrieve user record from memory or PostgreSQL/SQLite database."""
+    if not lookup_key:
+        return None
+    clean_key = lookup_key.strip().lower()
+
+    if clean_key in USER_DB:
+        return USER_DB[clean_key]
+
+    engine = _get_gateway_db_engine()
+    if engine is not None:
+        try:
+            from sqlalchemy import select
+            from sqlalchemy.orm import Session
+            from classync_contracts.models import FacultyProfile, StudentProfile
+
+            with Session(engine) as session:
+                is_uuid = False
+                target_uuid = None
+                try:
+                    target_uuid = uuid.UUID(clean_key)
+                    is_uuid = True
+                except (ValueError, AttributeError):
+                    pass
+
+                query_fac = select(FacultyProfile).where(
+                    (FacultyProfile.institutional_email == clean_key) |
+                    ((FacultyProfile.id == target_uuid) if is_uuid else False)
+                )
+                fac = session.scalar(query_fac)
+                if fac:
+                    role_enum = UserRole.ADMIN if fac.role.upper() == "ADMIN" else UserRole.FACULTY
+                    u = UserRecord(
+                        user_id=fac.id,
+                        identifier=fac.institutional_email,
+                        email=fac.institutional_email,
+                        full_name=fac.full_name,
+                        role=role_enum,
+                        password_hash=fac.password_hash,
+                        requires_password_change=fac.requires_password_change,
+                    )
+                    USER_DB[u.identifier.lower()] = u
+                    USER_DB[u.email.lower()] = u
+                    USER_DB[str(u.user_id)] = u
+                    return u
+
+                query_stu = select(StudentProfile).where(
+                    (StudentProfile.student_id == clean_key) |
+                    (StudentProfile.institutional_email == clean_key) |
+                    ((StudentProfile.id == target_uuid) if is_uuid else False)
+                )
+                stu = session.scalar(query_stu)
+                if stu:
+                    u = UserRecord(
+                        user_id=stu.id,
+                        identifier=stu.student_id,
+                        email=stu.institutional_email,
+                        full_name=stu.full_name,
+                        role=UserRole.STUDENT,
+                        password_hash=stu.password_hash,
+                        requires_password_change=stu.requires_password_change,
+                    )
+                    USER_DB[u.identifier.lower()] = u
+                    USER_DB[u.email.lower()] = u
+                    USER_DB[str(u.user_id)] = u
+                    return u
+        except Exception:
+            pass
+
+    return USER_DB.get(clean_key)
+
+
+def save_user_password(user: UserRecord, new_password_hash: str) -> None:
+    """Commit updated password hash to both memory and database."""
+    user.password_hash = new_password_hash
+    user.requires_password_change = False
+    USER_DB[user.identifier.lower()] = user
+    USER_DB[user.email.lower()] = user
+    USER_DB[str(user.user_id)] = user
+
+    engine = _get_gateway_db_engine()
+    if engine is not None:
+        try:
+            from sqlalchemy.orm import Session
+            from classync_contracts.models import FacultyProfile, StudentProfile
+
+            with Session(engine) as session:
+                fac = session.get(FacultyProfile, user.user_id)
+                if fac:
+                    fac.password_hash = new_password_hash
+                    fac.requires_password_change = False
+                    session.commit()
+                    return
+                stu = session.get(StudentProfile, user.user_id)
+                if stu:
+                    stu.password_hash = new_password_hash
+                    stu.requires_password_change = False
+                    session.commit()
+                    return
+        except Exception:
+            pass
+
 
 def reset_user_db() -> None:
     """Reset the mock database and Turnstile state to initial state (for testing)."""
@@ -290,7 +405,7 @@ async def google_sso_endpoint(
 
     # Resolve or create user record
     lookup_key = claims.email.lower()
-    user = USER_DB.get(lookup_key) or USER_DB.get(claims.identifier.lower())
+    user = get_user_record(lookup_key) or get_user_record(claims.identifier.lower())
 
     if user is None:
         # First time login via Google Workspace
@@ -366,7 +481,7 @@ async def local_login_endpoint(
 
     # 2. Identifier Lookup
     lookup_key = body.identifier.strip().lower()
-    user = USER_DB.get(lookup_key)
+    user = get_user_record(lookup_key)
     if user is None or not user.password_hash:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -436,7 +551,7 @@ async def login_step1_endpoint(
         )
 
     lookup_key = body.identifier.strip().lower()
-    user = USER_DB.get(lookup_key)
+    user = get_user_record(lookup_key)
     if user is None or not user.password_hash:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -487,7 +602,7 @@ async def login_verify_otp_endpoint(
             detail=message,
         )
 
-    user = USER_DB.get(email.lower())
+    user = get_user_record(email.lower())
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -556,7 +671,7 @@ async def setup_password_endpoint(
 
     # 3. Locate User
     lookup_key = body.student_or_employee_id.strip().lower()
-    user = USER_DB.get(lookup_key)
+    user = get_user_record(lookup_key)
 
     if user is None:
         # Create record if not found (e.g. initial student registration for cohorts 20-99)
@@ -580,8 +695,7 @@ async def setup_password_endpoint(
         USER_DB[str(user.user_id)] = user
 
     # 4. Hash and Commit
-    user.password_hash = hash_password(body.new_password)
-    user.requires_password_change = False
+    save_user_password(user, hash_password(body.new_password))
 
     # 5. Issue Full Unrestricted Tokens
     access_token = jwt_manager.create_access_token(
@@ -638,7 +752,7 @@ async def refresh_endpoint(
 
     claims = jwt_manager.decode_and_verify(refresh_token, expected_type="refresh")
     user_id = claims.get("sub")
-    user = USER_DB.get(str(user_id))
+    user = get_user_record(str(user_id))
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -685,7 +799,7 @@ async def me_endpoint(request: Request) -> SessionUser:
 
     claims = jwt_manager.decode_and_verify(token, expected_type="access")
     user_id = claims.get("sub")
-    user = USER_DB.get(str(user_id))
+    user = get_user_record(str(user_id))
     if not user:
         return SessionUser(
             id=uuid.UUID(str(user_id)) if len(str(user_id)) == 36 else uuid.uuid4(),

@@ -27,14 +27,17 @@ from classync_contracts.models import (
     Workstation,
     CurriculumVersion,
     StudentCurriculumOverride,
+    StudentProfile,
 )
 
 # Standard genuine Argon2id hashes (m=65536, t=3, p=4)
 # Passwords:
-# Admin: CdMAdmin2026!
-# Faculty: FacultyPass2026!
-ADMIN_ARGON2_HASH = "$argon2id$v=19$m=65536,t=3,p=4$ZOVquUXkFTzQ3E1sFpcEMQ$LP5kqMdyy6FH8o3RseQtI4SCOYOAfoi/QEYtltkU334"
-FACULTY_ARGON2_HASH = "$argon2id$v=19$m=65536,t=3,p=4$iWJfmpxOIjOvIf1D+ve+JQ$sDVSIXCHWz2BOrwSCa1uZ2MjnTfrphRYee4OK0DfWRg"
+# Admin: AdminPass2026!# / CdMAdmin2026!
+# Faculty: FacultyPass2026!# / FacultyPass2026!
+# Student: ValidPass2026!#
+ADMIN_ARGON2_HASH = "$argon2id$v=19$m=65536,t=3,p=4$jLk8/ksvHOST+qTy/gPRVg$8ItPYYpD/dQ9qIFAaofAN3laQugRnTPgMg3iEsNtBVI"
+FACULTY_ARGON2_HASH = "$argon2id$v=19$m=65536,t=3,p=4$UmyNR6CsVbc8UyX1VPnn5Q$SxPRjTfftE2oa3nVk2ifbT4D5szWphg7zteFn9U5Bo0"
+STUDENT_ARGON2_HASH = "$argon2id$v=19$m=65536,t=3,p=4$SwxwyafI6vTCccc8O28h8A$T7HjEMJ3WsdTi4rnWNLMxsBrpHrgjU0SEu1ABndcTN8"
 
 
 def seed_database(session: Session) -> Dict[str, int]:
@@ -48,6 +51,7 @@ def seed_database(session: Session) -> Dict[str, int]:
         "sections": 0,
         "offerings": 0,
         "curriculum_versions": 0,
+        "students": 0,
     }
 
     # 1. Academic Period
@@ -291,7 +295,7 @@ def seed_database(session: Session) -> Dict[str, int]:
         {
             "id": uuid.UUID("33333333-3333-3333-3333-333333333301"),
             "institutional_email": "admin@pnm.edu.ph",
-            "full_name": "CdM Academic Administrator",
+            "full_name": "ClassSync Administrator",
             "employment_tier": "FULL_TIME",
             "password_hash": ADMIN_ARGON2_HASH,
             "requires_password_change": False,
@@ -332,6 +336,26 @@ def seed_database(session: Session) -> Dict[str, int]:
             "id": uuid.UUID("33333333-3333-3333-3333-333333333305"),
             "institutional_email": "gretchen@pnm.edu.ph",
             "full_name": "Prof. Gretchen ADMS",
+            "employment_tier": "FULL_TIME",
+            "password_hash": FACULTY_ARGON2_HASH,
+            "requires_password_change": False,
+            "is_active": True,
+            "role": "FACULTY",
+        },
+        {
+            "id": uuid.UUID("33333333-3333-3333-3333-333333333306"),
+            "institutional_email": "ngomez@pnm.edu.ph",
+            "full_name": "Engr. Nathaniel Gomez",
+            "employment_tier": "FULL_TIME",
+            "password_hash": FACULTY_ARGON2_HASH,
+            "requires_password_change": False,
+            "is_active": True,
+            "role": "FACULTY",
+        },
+        {
+            "id": uuid.UUID("33333333-3333-3333-3333-333333333307"),
+            "institutional_email": "prof.mades@pnm.edu.ph",
+            "full_name": "Prof. Mades",
             "employment_tier": "FULL_TIME",
             "password_hash": FACULTY_ARGON2_HASH,
             "requires_password_change": False,
@@ -505,6 +529,91 @@ def seed_database(session: Session) -> Dict[str, int]:
     # Link Section to Curriculum Version (e.g., BSIT-3A follows Curriculum 23)
     if "BSIT_23" in cv_map and "BSIT-3A" in section_map:
         section_map["BSIT-3A"].curriculum_version_id = cv_map["BSIT_23"].id
+
+    # 9. Student Profiles (Phase 11 Real Authentication Roster)
+    students_data: List[Dict[str, Any]] = [
+        {
+            "id": uuid.UUID("11111111-1111-1111-1111-111111111111"),
+            "student_id": "24-00123",
+            "institutional_email": "24-00123@student.pnm.edu.ph",
+            "full_name": "Juan Dela Cruz",
+            "section_code": "BSIT-3A",
+            "curriculum_version_id": cv_map.get("BSIT_23").id if "BSIT_23" in cv_map else None,
+            "year_level": 3,
+            "password_hash": STUDENT_ARGON2_HASH,
+            "requires_password_change": False,
+            "is_active": True,
+        },
+        {
+            "id": uuid.UUID("22222222-2222-2222-2222-222222222222"),
+            "student_id": "24-00999",
+            "institutional_email": "24-00999@student.pnm.edu.ph",
+            "full_name": "Freshie Student",
+            "section_code": "BSIT-3A",
+            "curriculum_version_id": cv_map.get("BSIT_24").id if "BSIT_24" in cv_map else None,
+            "year_level": 1,
+            "password_hash": None,
+            "requires_password_change": True,
+            "is_active": True,
+        },
+        {
+            "id": uuid.UUID("11111111-1111-1111-1111-111111111122"),
+            "student_id": "22-00123",
+            "institutional_email": "22-00123@student.pnm.edu.ph",
+            "full_name": "Student Cohort 2022",
+            "section_code": "BSIT-3A",
+            "curriculum_version_id": cv_map.get("BSIT_22").id if "BSIT_22" in cv_map else None,
+            "year_level": 4,
+            "password_hash": STUDENT_ARGON2_HASH,
+            "requires_password_change": False,
+            "is_active": True,
+        },
+        {
+            "id": uuid.UUID("11111111-1111-1111-1111-111111111123"),
+            "student_id": "23-00123",
+            "institutional_email": "23-00123@student.pnm.edu.ph",
+            "full_name": "Student Cohort 2023",
+            "section_code": "BSIT-3A",
+            "curriculum_version_id": cv_map.get("BSIT_23").id if "BSIT_23" in cv_map else None,
+            "year_level": 3,
+            "password_hash": STUDENT_ARGON2_HASH,
+            "requires_password_change": False,
+            "is_active": True,
+        },
+        {
+            "id": uuid.UUID("11111111-1111-1111-1111-111111111125"),
+            "student_id": "25-00123",
+            "institutional_email": "25-00123@student.pnm.edu.ph",
+            "full_name": "Student Cohort 2025",
+            "section_code": "BSIT-3A",
+            "curriculum_version_id": cv_map.get("BSIT_25").id if "BSIT_25" in cv_map else None,
+            "year_level": 2,
+            "password_hash": STUDENT_ARGON2_HASH,
+            "requires_password_change": False,
+            "is_active": True,
+        },
+        {
+            "id": uuid.UUID("11111111-1111-1111-1111-111111111126"),
+            "student_id": "26-00123",
+            "institutional_email": "26-00123@student.pnm.edu.ph",
+            "full_name": "Student Cohort 2026",
+            "section_code": "BSIT-3A",
+            "curriculum_version_id": cv_map.get("BSIT_26").id if "BSIT_26" in cv_map else None,
+            "year_level": 1,
+            "password_hash": STUDENT_ARGON2_HASH,
+            "requires_password_change": False,
+            "is_active": True,
+        },
+    ]
+
+    for stu_data in students_data:
+        existing_student = session.scalar(
+            select(StudentProfile).where(StudentProfile.student_id == stu_data["student_id"])
+        )
+        if not existing_student:
+            student = StudentProfile(**stu_data)
+            session.add(student)
+            counts["students"] += 1
 
     session.commit()
     return counts
