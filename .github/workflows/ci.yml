@@ -20,17 +20,20 @@ jobs:
           version: "latest"
 
       - name: Set up Python
-        run: uv python install 3.12
+        run: |
+          uv python install 3.12
+          uv venv
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
 
       - name: Install Python Dependencies
         run: |
-          uv pip install --system -e packages/contracts-py
-          uv pip install --system -r services/gateway/requirements.txt
-          uv pip install --system -r services/academic/requirements.txt
-          uv pip install --system -r services/scheduling/requirements.txt
-          uv pip install --system -r services/presence/requirements.txt
-          uv pip install --system -r services/notification/requirements.txt
-          uv pip install --system pytest pytest-asyncio anyio httpx
+          uv pip install -e packages/contracts-py
+          uv pip install -r services/gateway/requirements.txt
+          uv pip install -r services/academic/requirements.txt
+          uv pip install -r services/scheduling/requirements.txt
+          uv pip install -r services/presence/requirements.txt
+          uv pip install -r services/notification/requirements.txt
+          uv pip install pytest pytest-asyncio anyio httpx python-multipart
 
       - name: Run Full Unit Test Suite
         env:
