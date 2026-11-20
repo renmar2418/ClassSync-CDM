@@ -66,6 +66,8 @@ class RBACRouteGuard:
         if (
             path.startswith("/api/v1/scheduling/swaps")
             or path.startswith("/api/v1/presence/totp")
+            or "/faculty-checkin" in path
+            or "/faculty-checkout" in path
         ):
             return {UserRole.FACULTY, UserRole.ADMIN}
 

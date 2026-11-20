@@ -11,7 +11,7 @@ services:
     env: python
     region: singapore
     plan: starter
-    buildCommand: pip install -r services/gateway/requirements.txt
+    buildCommand: pip install -e packages/contracts-py && pip install -r services/gateway/requirements.txt
     startCommand: uvicorn services.gateway.main:app --host 0.0.0.0 --port 8000
     envVars:
       - key: PORT
@@ -35,16 +35,25 @@ services:
           type: web
           name: classync-presence
           property: host
+      - key: NOTIFICATION_SERVICE_URL
+        fromService:
+          type: web
+          name: classync-notification
+          property: host
+      - key: DATABASE_URL
+        fromDatabase:
+          name: classync-postgres
+          property: connectionString
 
   # =========================================================================
-  # 2. Academic Service (Port 8001) — Spatial Directory & Curriculum Engine
+  # 2. Academic Service (Port 8001) — Spatial Directory, Curricula, & Roster
   # =========================================================================
   - type: web
     name: classync-academic
     env: python
     region: singapore
     plan: starter
-    buildCommand: pip install -r services/academic/requirements.txt
+    buildCommand: pip install -e packages/contracts-py && pip install -r services/academic/requirements.txt
     startCommand: uvicorn services.academic.main:app --host 0.0.0.0 --port 8001
     envVars:
       - key: PORT
@@ -55,14 +64,14 @@ services:
           property: connectionString
 
   # =========================================================================
-  # 3. Scheduling Service (Port 8002) — Google OR-Tools CP-SAT Solver
+  # 3. Scheduling Service (Port 8002) — Google OR-Tools CP-SAT Solver & PDF
   # =========================================================================
   - type: web
     name: classync-scheduling
     env: python
     region: singapore
     plan: standard
-    buildCommand: pip install -r services/scheduling/requirements.txt
+    buildCommand: pip install -e packages/contracts-py && pip install -r services/scheduling/requirements.txt
     startCommand: uvicorn services.scheduling.main:app --host 0.0.0.0 --port 8002
     envVars:
       - key: PORT
@@ -73,18 +82,38 @@ services:
           property: connectionString
 
   # =========================================================================
-  # 4. Presence Service (Port 8004) — 15s TOTP QR & Real-Time SSE Vacancy
+  # 4. Presence Service (Port 8004) — 15s TOTP QR, Workstations, & Presence
   # =========================================================================
   - type: web
     name: classync-presence
     env: python
     region: singapore
     plan: starter
-    buildCommand: pip install -r services/presence/requirements.txt
+    buildCommand: pip install -e packages/contracts-py && pip install -r services/presence/requirements.txt
     startCommand: uvicorn services.presence.main:app --host 0.0.0.0 --port 8004
     envVars:
       - key: PORT
         value: 8004
+      - key: DATABASE_URL
+        fromDatabase:
+          name: classync-postgres
+          property: connectionString
+
+  # =========================================================================
+  # 5. Notification Service (Port 8003) — Brevo SMTP & OTP Delivery Engine
+  # =========================================================================
+  - type: web
+    name: classync-notification
+    env: python
+    region: singapore
+    plan: starter
+    buildCommand: pip install -e packages/contracts-py && pip install -r services/notification/requirements.txt
+    startCommand: uvicorn services.notification.main:app --host 0.0.0.0 --port 8003
+    envVars:
+      - key: PORT
+        value: 8003
+      - key: BREVO_API_KEY
+        sync: false
       - key: DATABASE_URL
         fromDatabase:
           name: classync-postgres

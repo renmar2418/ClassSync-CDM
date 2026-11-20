@@ -1,8 +1,8 @@
 export function registerServiceWorker(onUpdate?: () => void): void {
-  if (typeof window !== 'undefined' && 'serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+  if (typeof window !== 'undefined' && 'serviceWorker' in navigator && (process.env.NODE_ENV === 'production' || window.location.hostname !== 'localhost')) {
     window.addEventListener('load', () => {
       navigator.serviceWorker
-        .register('/service-worker.ts')
+        .register('/sw.js')
         .then((registration) => {
           registration.onupdatefound = () => {
             const installingWorker = registration.installing;

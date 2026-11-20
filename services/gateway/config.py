@@ -71,5 +71,19 @@ class GatewaySettings(BaseModel):
         "registrar@pnm.edu.ph",
     )
 
+    # CORS Allowed Origins
+    cors_allowed_origins: Tuple[str, ...] = Field(
+        default_factory=lambda: tuple(
+            [
+                o.strip()
+                for o in os.getenv(
+                    "CORS_ALLOWED_ORIGINS",
+                    "https://classync.renmar.dev,http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,*",
+                ).split(",")
+                if o.strip()
+            ]
+        )
+    )
+
 
 settings = GatewaySettings()
